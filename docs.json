@@ -1,49 +1,61 @@
 {
   "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
   "name": "costrace",
   "favicon": "/favicon.png",
   "colors": {
     "primary": "#10b981",
     "light": "#6ee7b7",
-    "dark": "#059669",
-    "anchors": {
-      "from": "#10b981",
-      "to": "#059669"
+    "dark": "#059669"
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": ["introduction", "quickstart"]
+          },
+          {
+            "group": "SDKs",
+            "pages": ["sdks/python", "sdks/nodejs"]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "API Reference",
+            "pages": ["api/authentication", "api/traces"]
+          }
+        ]
+      }
+    ],
+    "global": {
+      "anchors": [
+        {
+          "anchor": "GitHub",
+          "href": "https://github.com/ikotun-dev/costrace",
+          "icon": "github"
+        }
+      ]
     }
   },
-  "topbar": {
-    "cta": {
-      "name": "Get Started",
-      "url": "https://costrace.dev/auth"
-    },
+  "navbar": {
     "links": [
       {
-        "name": "Dashboard",
-        "url": "https://costrace.dev/dashboard"
+        "label": "Dashboard",
+        "href": "https://costrace.dev/dashboard"
       }
-    ]
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Get Started",
+      "href": "https://costrace.dev/auth"
+    }
   },
-  "anchors": [
-    {
-      "name": "GitHub",
-      "icon": "github",
-      "url": "https://github.com/ikotun-dev/costrace"
-    }
-  ],
-  "navigation": [
-    {
-      "group": "Getting Started",
-      "pages": ["introduction", "quickstart"]
-    },
-    {
-      "group": "SDKs",
-      "pages": ["sdks/python", "sdks/nodejs"]
-    },
-    {
-      "group": "API Reference",
-      "pages": ["api/traces", "api/authentication"]
-    }
-  ],
   "footer": {
     "socials": {
       "github": "https://github.com/ikotun-dev/costrace"
