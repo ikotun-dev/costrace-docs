@@ -1,0 +1,75 @@
+---
+title: Introduction
+description: Track LLM costs, token usage, and latency with one line of code
+---
+
+## What is Costrace?
+
+Costrace is an LLM observability SDK that automatically tracks cost, token usage, and latency for every API call you make to OpenAI, Anthropic, or Google Gemini.
+
+No code changes required, just call `init()` and use your LLM SDKs as normal.
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="Zero Configuration" icon="bolt">
+    One line to initialize. Works by monkey-patching your existing LLM client
+    libraries.
+  </Card>
+  <Card title="Real-time Cost Tracking" icon="dollar-sign">
+    See exactly how much each API call costs, broken down by model and provider.
+  </Card>
+  <Card title="Latency Monitoring" icon="gauge">
+    Track response times to identify slow endpoints and optimize performance.
+  </Card>
+  <Card title="Multi-Provider Support" icon="globe">
+    OpenAI, Anthropic, and Gemini all tracked automatically.
+  </Card>
+</CardGroup>
+
+## How It Works
+
+Costrace works by patching the client libraries for OpenAI, Anthropic, and Gemini. When you make an API call, Costrace:
+
+1. Records the start time
+2. Lets your call proceed normally
+3. Captures token usage and response time
+4. Calculates the cost based on current pricing
+5. Sends a trace to the Costrace backend (fire-and-forget, non-blocking)
+
+All of this happens transparently! Your code doesn't change.
+
+## Supported Providers
+
+<AccordionGroup>
+  <Accordion title="OpenAI">
+    - GPT-5 family (5.2, 5, 5-mini, 5-nano) - GPT-4 family (4o, 4o-mini, 4.1,
+    4-turbo, 4) - GPT-3.5-turbo - o3, o4-mini
+  </Accordion>
+
+<Accordion title="Anthropic">
+  - Claude Opus (4-6, 4-1, 4) - Claude Sonnet (4-6, 4-5, 4, 3-7, 3.5) - Claude
+  Haiku (4-5, 3)
+</Accordion>
+
+  <Accordion title="Google Gemini">
+    - Gemini 2.0 (flash, flash-lite) - Gemini 1.5 (pro, flash, flash-8b)
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Get up and running in 2 minutes
+  </Card>
+  <Card title="Python SDK" icon="python" href="/sdks/python">
+    Installation and usage for Python
+  </Card>
+  <Card title="Node.js SDK" icon="node-js" href="/sdks/nodejs">
+    Installation and usage for Node.js
+  </Card>
+  <Card title="API Reference" icon="code" href="/api/traces">
+    REST API documentation
+  </Card>
+</CardGroup>

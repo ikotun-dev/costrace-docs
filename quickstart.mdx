@@ -1,0 +1,116 @@
+---
+title: Quick Start
+description: Get started with Costrace in under 2 minutes
+---
+
+## 1. Get Your API Key
+
+Sign up at [costrace.dev](https://costrace.dev/auth) and grab your API key from the dashboard.
+
+## 2. Install the SDK
+
+<CodeGroup>
+
+```bash Python
+pip install costrace-sdk[openai]       # OpenAI only
+pip install costrace-sdk[anthropic]    # Anthropic only
+pip install costrace-sdk[gemini]       # Gemini only
+pip install costrace-sdk[all]          # All providers
+```
+
+```bash Node.js
+npm install costrace
+```
+
+</CodeGroup>
+
+## 3. Initialize Costrace
+
+Add one line at the top of your application:
+
+<CodeGroup>
+
+```python Python
+import costrace
+
+costrace.init(api_key="ct_your_api_key")
+```
+
+```typescript Node.js
+import * as costrace from "costrace";
+
+costrace.init("ct_your_api_key");
+```
+
+</CodeGroup>
+
+## 4. Use Your LLM SDKs Normally
+
+That's it. All API calls are now tracked automatically.
+
+<CodeGroup>
+
+```python Python
+import openai
+
+client = openai.OpenAI()
+response = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[{"role": "user", "content": "Hello!"}],
+)
+```
+
+```typescript Node.js
+import OpenAI from "openai";
+
+const openai = new OpenAI();
+const response = await openai.chat.completions.create({
+  model: "gpt-4o",
+  messages: [{ role: "user", content: "Hello!" }],
+});
+```
+
+</CodeGroup>
+
+## 5. View Your Traces
+
+Head to [costrace.dev/dashboard/logs](https://costrace.dev/dashboard/logs) to see:
+
+- Cost per call in USD
+- Token counts (input/output)
+- Latency in milliseconds
+- Success/error status
+- Geographic distribution
+
+## Local Development
+
+If you're testing locally and want traces to go to your local backend instead of production:
+
+<CodeGroup>
+
+```python Python
+costrace.init(
+    api_key="ct_your_api_key",
+    endpoint="http://localhost:8080/v1/traces"
+)
+```
+
+```typescript Node.js
+costrace.init(
+  "ct_your_api_key",
+  "http://localhost:8080/v1/traces"
+);
+```
+
+</CodeGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Python SDK" icon="python" href="/sdks/python">
+    Detailed Python documentation
+  </Card>
+  <Card title="Node.js SDK" icon="node-js" href="/sdks/nodejs">
+    Detailed Node.js documentation
+  </Card>
+</CardGroup>

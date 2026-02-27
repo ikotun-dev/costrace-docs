@@ -1,0 +1,48 @@
+{
+  "name": "costrace",
+
+  "favicon": "/favicon.png",
+  "colors": {
+    "primary": "#10b981",
+    "light": "#6ee7b7",
+    "dark": "#059669",
+    "anchors": {
+      "from": "#10b981",
+      "to": "#059669"
+    }
+  },
+  "topbarCtaButton": {
+    "name": "Get Started",
+    "url": "https://costrace.dev/auth"
+  },
+  "topbarLinks": [
+    {
+      "name": "Dashboard",
+      "url": "https://costrace.dev/dashboard"
+    }
+  ],
+  "anchors": [
+    {
+      "name": "GitHub",
+      "icon": "github",
+      "url": "https://github.com/ikotun-dev/costrace"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": ["introduction", "quickstart"]
+    },
+    {
+      "group": "SDKs",
+      "pages": ["sdks/python", "sdks/nodejs"]
+    },
+    {
+      "group": "API Reference",
+      "pages": ["api/traces", "api/authentication"]
+    }
+  ],
+  "footerSocials": {
+    "github": "https://github.com/ikotun-dev/costrace"
+  }
+}

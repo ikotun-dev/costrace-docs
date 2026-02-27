@@ -1,0 +1,113 @@
+---
+title: Authentication
+description: How to authenticate with the Costrace API
+---
+
+## API Keys
+
+All API requests require authentication using your Costrace API key. You can find your API key in the [dashboard](https://costrace.dev/dashboard).
+
+## Header Format
+
+Include your API key in the `Authorization` header:
+
+```bash
+Authorization: Bearer ct_your_api_key_here
+```
+
+## Example Request
+
+```bash
+curl -X POST https://api.costrace.dev/v1/traces \
+  -H "Authorization: Bearer ct_your_api_key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "provider": "openai",
+    "model": "gpt-4o",
+    "tokens_in": 100,
+    "tokens_out": 50,
+    "latency_ms": 1234,
+    "cost_usd": 0.005,
+    "api_key": "ct_your_api_key",
+    "status": "success"
+  }'
+```
+
+## Key Management
+
+### Getting Your Key
+
+1. Sign up at [costrace.dev/auth](https://costrace.dev/auth)
+2. Navigate to your dashboard
+3. Copy your API key from the settings or API keys section
+
+### Security Best Practices
+
+<Warning>
+  Never commit API keys to version control. Use environment variables instead.
+</Warning>
+
+**Good:**
+```bash
+export COSTRACE_API_KEY=ct_your_api_key
+```
+
+```python
+import os
+costrace.init(api_key=os.environ["COSTRACE_API_KEY"])
+```
+
+**Bad:**
+```python
+# DON'T DO THIS
+costrace.init(api_key="ct_abc123...")  # Hardcoded key
+```
+
+### Rotating Keys
+
+If your API key is compromised:
+
+1. Generate a new key in the dashboard
+2. Update your application environment variables
+3. Revoke the old key
+
+## Rate Limits
+
+API keys are subject to rate limits based on your plan:
+
+| Plan | Traces/Month | Rate Limit |
+|------|--------------|------------|
+| Free | 50,000 | 100/min |
+| Pro  | 500,000 | 1,000/min |
+
+Rate limit headers are included in API responses:
+
+```
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 95
+X-RateLimit-Reset: 1709136000
+```
+
+## Error Responses
+
+### 401 Unauthorized
+
+Invalid or missing API key:
+
+```json
+{
+  "error": "Unauthorized",
+  "message": "Invalid API key"
+}
+```
+
+### 429 Too Many Requests
+
+Rate limit exceeded:
+
+```json
+{
+  "error": "Rate limit exceeded",
+  "retry_after": 60
+}
+```

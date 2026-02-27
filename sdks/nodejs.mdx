@@ -1,0 +1,164 @@
+---
+title: Node.js SDK
+description: Track LLM costs in Node.js and TypeScript applications
+---
+
+## Installation
+
+```bash
+npm install costrace
+```
+
+The SDK has peer dependencies for OpenAI, Anthropic, and Gemini. Only install the ones you use:
+
+```bash
+npm install openai              # For OpenAI
+npm install @anthropic-ai/sdk   # For Anthropic
+npm install @google/genai       # For Gemini
+```
+
+## Basic Usage
+
+```typescript
+import * as costrace from "costrace";
+import OpenAI from "openai";
+
+// Initialize Costrace once at startup
+costrace.init("ct_your_api_key");
+
+// Use OpenAI normally — all calls are tracked
+const openai = new OpenAI();
+const response = await openai.chat.completions.create({
+  model: "gpt-4o",
+  messages: [{ role: "user", content: "Hello!" }],
+});
+```
+
+## Configuration
+
+### Custom Endpoint
+
+Point to a self-hosted or local backend:
+
+```typescript
+costrace.init(
+  "ct_your_api_key",
+  "https://your-backend.com/v1/traces"
+);
+```
+
+## Supported Providers
+
+### OpenAI
+
+```typescript
+import OpenAI from "openai";
+
+const openai = new OpenAI({ apiKey: "sk-..." });
+const response = await openai.chat.completions.create({
+  model: "gpt-4o",
+  messages: [{ role: "user", content: "Hello" }],
+});
+```
+
+**Supported Models:**
+- GPT-5 family: `gpt-5.2`, `gpt-5`, `gpt-5-mini`, `gpt-5-nano`
+- GPT-4 family: `gpt-4o`, `gpt-4o-mini`, `gpt-4.1`, `gpt-4-turbo`, `gpt-4`
+- GPT-3.5: `gpt-3.5-turbo`
+- Other: `o3`, `o4-mini`
+
+### Anthropic
+
+```typescript
+import Anthropic from "@anthropic-ai/sdk";
+
+const client = new Anthropic({ apiKey: "sk-ant-..." });
+const message = await client.messages.create({
+  model: "claude-sonnet-4-20250514",
+  max_tokens: 1024,
+  messages: [{ role: "user", content: "Hello" }],
+});
+```
+
+**Supported Models:**
+- Opus: `claude-opus-4-6`, `claude-opus-4-1-20250805`, `claude-opus-4-20250514`
+- Sonnet: `claude-sonnet-4-6`, `claude-sonnet-4-5-20250929`, `claude-sonnet-4-20250514`, `claude-3-7-sonnet-20250219`
+- Haiku: `claude-haiku-4-5-20251001`, `claude-3-haiku-20240307`
+
+### Google Gemini
+
+```typescript
+import { GoogleGenAI } from "@google/genai";
+
+const genai = new GoogleGenAI({ apiKey: "AIza..." });
+const response = await genai.models.generateContent({
+  model: "gemini-2.0-flash",
+  contents: "Hello",
+});
+```
+
+**Supported Models:**
+- Gemini 2.0: `gemini-2.0-flash`, `gemini-2.0-flash-lite`
+- Gemini 1.5: `gemini-1.5-pro`, `gemini-1.5-flash`, `gemini-1.5-flash-8b`
+
+## What Gets Tracked
+
+Every LLM API call sends a trace containing:
+
+```typescript
+{
+  provider: "openai",           // openai | anthropic | gemini
+  model: "gpt-4o",
+  tokens_in: 100,               // Prompt tokens
+  tokens_out: 50,               // Completion tokens
+  latency_ms: 1234,             // Time in milliseconds
+  cost_usd: 0.005,              // Calculated cost
+  status: "success",            // success | error
+  api_key: "ct_...",            // Your Costrace API key
+  error: "..."                  // Error message (if status=error)
+}
+```
+
+Traces are sent using **fire-and-forget fetch** — they don't block your application.
+
+## Manual Cost Calculation
+
+If you need to calculate costs without sending traces:
+
+```typescript
+import { calculateCost } from "costrace";
+
+const cost = calculateCost("openai", "gpt-4o", 1000, 500);
+// Returns cost in USD for 1000 input tokens and 500 output tokens
+```
+
+## Requirements
+
+- **Node.js:** 18 or higher (for native `fetch` support)
+- **Dependencies:** No runtime dependencies. Provider SDKs are peer dependencies.
+
+## Troubleshooting
+
+### No traces appearing in dashboard
+
+1. Check that `costrace.init()` is called **before** creating LLM clients
+2. Verify your API key is correct
+3. Check browser console (if client-side) or terminal for error warnings
+
+### TypeScript errors
+
+The SDK is fully typed. If you see type errors, make sure you have the provider SDK installed:
+
+```bash
+npm install openai @types/node
+```
+
+### Traces not being sent
+
+Check your browser console or terminal for `[Costrace]` warnings. The SDK uses `console.warn()` for errors.
+
+## Source Code
+
+GitHub: [github.com/ikotun-dev/costrace](https://github.com/ikotun-dev/costrace)
+
+npm: [npmjs.com/package/costrace](https://www.npmjs.com/package/costrace)
