@@ -5,31 +5,66 @@ description: Track LLM costs in Python applications
 
 ## Installation
 
-Install only the providers you use to keep dependencies minimal:
+Install the SDK from PyPI using pip:
 
 ```bash
-pip install costrace-sdk[openai]       # OpenAI only
-pip install costrace-sdk[anthropic]    # Anthropic only
-pip install costrace-sdk[gemini]       # Gemini only
-pip install costrace-sdk[all]          # All providers
+pip install costrace-sdk
 ```
 
-## Basic Usage
+This installs the core SDK with no provider dependencies. To include the provider libraries you need, use extras:
+
+<CodeGroup>
+
+```bash OpenAI
+pip install costrace-sdk[openai]
+```
+
+```bash Anthropic
+pip install costrace-sdk[anthropic]
+```
+
+```bash Google Gemini
+pip install costrace-sdk[gemini]
+```
+
+```bash All Providers
+pip install costrace-sdk[all]
+```
+
+</CodeGroup>
+
+If you already have a provider SDK installed (e.g. `openai`, `anthropic`, or `google-genai`), the base `pip install costrace-sdk` is all you need — Costrace will detect and patch any installed providers automatically.
+
+<Note>
+  Requires **Python 3.8 or higher**.
+</Note>
+
+## How It Works
+
+Costrace uses **monkey-patching** to wrap your existing LLM client methods. When you call `costrace.init()`, it automatically patches the clients for any installed providers — no code changes needed on your end.
+
+Every LLM call is intercepted to capture token usage, latency, and cost, then a trace is sent to the Costrace backend in a **background thread** so your application is never blocked.
+
+## Quick Start
 
 ```python
 import costrace
 import openai
 
-# Initialize Costrace once at startup
+# Initialize Costrace once at startup — before creating any LLM clients
 costrace.init(api_key="ct_your_api_key")
 
-# Use OpenAI normally — all calls are tracked
+# Use OpenAI as you normally would — all calls are automatically tracked
 client = openai.OpenAI()
 response = client.chat.completions.create(
     model="gpt-4o",
     messages=[{"role": "user", "content": "Hello!"}],
 )
 ```
+
+<Warning>
+  You must call `costrace.init()` **before** creating any LLM client instances. The SDK patches client constructors, so clients created before initialization won't be tracked.
+</Warning>
 
 ## Configuration
 
@@ -49,7 +84,10 @@ costrace.init(
 ### OpenAI
 
 ```python
+import costrace
 import openai
+
+costrace.init(api_key="ct_your_api_key")
 
 client = openai.OpenAI(api_key="sk-...")
 response = client.chat.completions.create(
@@ -67,7 +105,10 @@ response = client.chat.completions.create(
 ### Anthropic
 
 ```python
+import costrace
 import anthropic
+
+costrace.init(api_key="ct_your_api_key")
 
 client = anthropic.Anthropic(api_key="sk-ant-...")
 message = client.messages.create(
@@ -85,7 +126,10 @@ message = client.messages.create(
 ### Google Gemini
 
 ```python
+import costrace
 from google import genai
+
+costrace.init(api_key="ct_your_api_key")
 
 client = genai.Client(api_key="AIza...")
 response = client.models.generate_content(
@@ -116,12 +160,20 @@ Every LLM API call sends a trace containing:
 }
 ```
 
-Traces are sent in a **background thread** — they don't block your application.
+Traces are sent in a **background thread** — they don't block your application. The SDK also registers an `atexit` handler to wait up to 10 seconds for any pending traces before your process exits.
 
 ## Requirements
 
-- **Python:** 3.13 or higher
-- **Dependencies:** Only `requests` is required. Provider SDKs are optional.
+- **Python:** 3.8 or higher
+- **Core dependency:** `requests` — installed automatically
+- **Provider SDKs:** Optional, install only the ones you use
+
+| Extra | Installs | Minimum Version |
+|-------|----------|-----------------|
+| `openai` | `openai` | `>=2.21.0` |
+| `anthropic` | `anthropic` | `>=0.82.0` |
+| `gemini` | `google-genai` | `>=1.64.0` |
+| `all` | All of the above | — |
 
 ## Troubleshooting
 
@@ -133,7 +185,14 @@ Traces are sent in a **background thread** — they don't block your application
 
 ### Traces not being sent
 
-The SDK silently catches network errors when sending traces. This is intentional — trace failures should never break your application.
+The SDK silently catches network errors when sending traces. This is intentional — trace failures should never break your application. Check your network connectivity and ensure the Costrace API endpoint is reachable.
+
+### Provider not being tracked
+
+If a provider isn't being tracked, make sure:
+1. The provider SDK is installed (e.g. `pip install openai`)
+2. `costrace.init()` is called before creating the client instance
+3. You're using a supported model from the lists above
 
 ## Source Code
 
