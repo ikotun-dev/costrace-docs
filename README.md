@@ -16,7 +16,3 @@ docs/
     ├── authentication.mdx # Auth guide
     └── traces.mdx         # Traces API reference
 ```
-
-## Editing
-
-All documentation is written in MDX (Markdown with JSX components). See [Mintlify's documentation](https://mintlify.com/docs) for component references.
